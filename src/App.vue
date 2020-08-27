@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <power/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+  import power from "./components/power.vue"
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    power
   }
 }
 </script>
@@ -24,5 +23,6 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+background-color: rgb(228, 156, 102);
 }
 </style>
