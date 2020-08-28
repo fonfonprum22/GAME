@@ -1,17 +1,18 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col">
-        <button type="button" class="btn btn-outline-primary" v-on:click="created()">Start</button>
+      <div id="d1" class="col">
+        <button type="button" class="btn btn-outline-primary" v-on:click="reload()">Start</button>
       </div>
     </div>
     <div class="row">
       <div class="col-sm">
         <div class="card text-center">
           <div class="card-header">Hero {{unitHero.name}}</div>
-          <div class="card-body">
+          <div class="card-body" style="height:150px">
             <img
-              :style="{height:unitHero.percent + 'px'}"
+            
+              :style="{height:unitHero.percent + 'px'} "
               :src="require(`../assets/Player/${unitHero.url}`)"
               class="img-fluid"
               alt="Responsive image"
@@ -36,7 +37,7 @@
       <div class="col-sm">
         <div class="card text-center">
           <div class="card-header">Monster {{unitMonster.name}}</div>
-          <div class="card-body">
+          <div class="card-body" style="height:150px">
             <img
               :style="{height:unitMonster.percent + 'px'}"
               :src="require(`../assets/Monster/${unitMonster.url}`)"
@@ -62,39 +63,70 @@
     </div>
 
     <div class="row">
-      <div class="col" v-if="gameEnd==false">
-        <button  type="button" class="btn btn-outline-primary" v-on:click="attack(3,10),monattack(3,5)">Attack</button>
+      <div class="col" >
+        <button  type="button" class="btn btn-outline-primary" v-on:click="attack(3,10),monattack(3,5)" v-if="showwinner==false">Attack</button>
         <button
           type="button"
           class="btn btn-outline-primary"
           v-on:click="attack(5,15),monattack(4,10)"
-        >Special Attack</button>
+        v-if="showwinner==false">Special Attack</button>
       </div>
-      <div class="col" v-if="gameEnd==true && win==true">
-        <img
-              
-              :src="require(`../assets/Player/${unitHero.url}`)"
+  </div>
+   
+  <div class="row">
+  <div class="col">
+<!-- <img
+              style="height:200px"
+              :src="require(`../assets/${winner.url}`)"
               class="img-fluid"
               alt="Responsive image"
-            />
-            Win!
+            /> -->
+  </div>
+  </div>
 
+  <div class="row">
+  <div class="col">
+      
 
-     
-    </div>
-    <div class="col" v-if="gameEnd==true && win==false">
-       <img
-              
-              :src="require(`../assets/Monster/${unitMonster.url}`)"
-              class="img-fluid"
-              alt="Responsive image"
-            />
-            Win!
-
-
-     
     </div>
   </div>
+  <button v-if="showwinner==true" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Show winner</button>
+ <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      
+      <div class="modal-content">
+        <div class="modal-header">
+          
+          <h4 class="modal-title">winner</h4>
+        </div>
+        <div class="modal-body">
+         <img
+         v-if="winner.type=='Monster'"
+              style="height:200px"
+              :src="require(`../assets/Monster/${winner.url}`)"
+              class="img-fluid"
+              alt="Responsive image"
+            />
+
+            <img
+         v-if="winner.type=='hero'"
+              style="height:200px"
+              :src="require(`../assets/Player/${winner.url}`)"
+              class="img-fluid"
+              alt="Responsive image"
+            />
+        </div>
+        
+      </div>
+      
+    </div>
+  </div>
+  
+  
+
+
   </div>
 </template>
 
@@ -104,18 +136,18 @@ export default {
     return {
       unitHero: {},
       unitMonster: {},
+     showwinner:false,
       Hero: [
-        { name: "Anakin Skywalker",hpmax:100,hp: 100, url: "Anakin.png","percent":100},
-        { name: " Doraemon ",hpmax:200,hp: 200, url: "Doraemon.jpg","percent":100},
-        { name: " Iron man",hpmax:150, hp: 150, url: "IronMan.png","percent":100 },
+        { name: "Anakin Skywalker",hpmax:100,hp: 100, url: "Anakin.png","percent":100,type:"hero"},
+        { name: " emon ",hpmax:200,hp: 200, url: "Doraemon.jpg","percent":100,type:"hero"},
+        { name: " Iron man",hpmax:150, hp: 150, url: "IronMan.png","percent":100,type:"hero"},
       ],
       Monster: [
-        { name: "Thanos",hpmax:150, hp: 150, url: "Thanos.jpg","percent":100},
-        { name: "Darth  vader",hpmax:180, hp: 180, url: "DarthVader.jpg","percent":100},
-        { name: "Cell ",hpmax:300, hp: 300, url: "cell.jpg","percent":100 },
+        { name: "Thanos",hpmax:150, hp: 150, url: "Thanos.jpg","percent":100,type:"Monster"},
+        { name: "Darth  vader",hpmax:180, hp: 180, url: "DarthVader.jpg","percent":100,type:"Monster"},
+        { name: "Cell ",hpmax:300, hp: 300, url: "cell.jpg","percent":100,type:"Monster" },
       ],
-      gameEnd:false,
-      win:true
+      winner:{url:"DarthVader.jpg",type:"Monster"},
     };
   },
 
@@ -125,8 +157,8 @@ export default {
       this.unitMonster.hp = this.unitMonster.hp - dmg;
       if (this.unitMonster.hp<=0){
         this.unitMonster.hp=0
-        this.gameEnd=true
-        this.win=true
+      this.winner = this.unitHero
+      this.showwinner=true
       }
       this.unitMonster.percent = this.unitMonster.hp *100/this.unitMonster.hpmax
     },
@@ -135,17 +167,15 @@ export default {
       this.unitHero.hp = this.unitHero.hp - mondmg;
       if (this.unitHero.hp<=0){
         this.unitHero.hp=0
-        this.gameEnd=true
-        this.win=false
+   this.winner = this.unitMonster
+   this.showwinner=true
       }
       this.unitHero.percent = this.unitHero.hp *100/this.unitHero.hpmax
     },
-    created: function() {
-    this.unitHero = this.Hero[Math.max(Math.floor(Math.random() * 2) + 1, 0)];
-    this.unitMonster = this.Monster[
-      Math.max(Math.floor(Math.random() * 2) + 1, 0)
-    ];
-  },
+    reload:function(){
+      location.reload()
+    }
+
   },
   created() {
     this.unitHero = this.Hero[Math.max(Math.floor(Math.random() * 2) + 1, 0)];
@@ -159,4 +189,11 @@ export default {
 </script>
 
 <style>
+#d1{
+  div.polaroid {
+  width: 80%;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+}
 </style>
