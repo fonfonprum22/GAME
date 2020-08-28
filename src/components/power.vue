@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <button type="button" class="btn btn-outline-primary">Start</button>
+        <button type="button" class="btn btn-outline-primary" v-on:click="created()">Start</button>
       </div>
     </div>
     <div class="row">
@@ -62,16 +62,39 @@
     </div>
 
     <div class="row">
-      <div class="col">
-        <button type="button" class="btn btn-outline-primary" v-on:click="attack(3,10)">Attack</button>
+      <div class="col" v-if="gameEnd==false">
+        <button  type="button" class="btn btn-outline-primary" v-on:click="attack(3,10),monattack(3,5)">Attack</button>
         <button
           type="button"
           class="btn btn-outline-primary"
-          v-on:click="attack(5,15)"
+          v-on:click="attack(5,15),monattack(4,10)"
         >Special Attack</button>
       </div>
-      <div class="col"></div>
+      <div class="col" v-if="gameEnd==true && win==true">
+        <img
+              
+              :src="require(`../assets/Player/${unitHero.url}`)"
+              class="img-fluid"
+              alt="Responsive image"
+            />
+            Win!
+
+
+     
     </div>
+    <div class="col" v-if="gameEnd==true && win==false">
+       <img
+              
+              :src="require(`../assets/Monster/${unitMonster.url}`)"
+              class="img-fluid"
+              alt="Responsive image"
+            />
+            Win!
+
+
+     
+    </div>
+  </div>
   </div>
 </template>
 
@@ -91,6 +114,8 @@ export default {
         { name: "Darth  vader",hpmax:180, hp: 180, url: "DarthVader.jpg","percent":100},
         { name: "Cell ",hpmax:300, hp: 300, url: "cell.jpg","percent":100 },
       ],
+      gameEnd:false,
+      win:true
     };
   },
 
@@ -98,8 +123,29 @@ export default {
     attack: function (min, max) {
       let dmg = Math.max(Math.floor(Math.random() * max) + 1, min);
       this.unitMonster.hp = this.unitMonster.hp - dmg;
+      if (this.unitMonster.hp<=0){
+        this.unitMonster.hp=0
+        this.gameEnd=true
+        this.win=true
+      }
       this.unitMonster.percent = this.unitMonster.hp *100/this.unitMonster.hpmax
     },
+     monattack: function (min, max) {
+      let mondmg = Math.max(Math.floor(Math.random() * max) + 1, min);
+      this.unitHero.hp = this.unitHero.hp - mondmg;
+      if (this.unitHero.hp<=0){
+        this.unitHero.hp=0
+        this.gameEnd=true
+        this.win=false
+      }
+      this.unitHero.percent = this.unitHero.hp *100/this.unitHero.hpmax
+    },
+    created: function() {
+    this.unitHero = this.Hero[Math.max(Math.floor(Math.random() * 2) + 1, 0)];
+    this.unitMonster = this.Monster[
+      Math.max(Math.floor(Math.random() * 2) + 1, 0)
+    ];
+  },
   },
   created() {
     this.unitHero = this.Hero[Math.max(Math.floor(Math.random() * 2) + 1, 0)];
@@ -107,6 +153,8 @@ export default {
       Math.max(Math.floor(Math.random() * 2) + 1, 0)
     ];
   },
+ 
+
 };
 </script>
 
